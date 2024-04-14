@@ -1,5 +1,5 @@
 from django import forms
-from tracker.models import Task, Comment
+from tracker.models import Task
 
 class TaskForm(forms.ModelForm):
     class Meta:
@@ -7,7 +7,7 @@ class TaskForm(forms.ModelForm):
         fields = ["title", "description", "status", "priority"]
 
     def __init__(self, *args, **kwargs):
-        super(TaskForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({"class": "form-control"})
 
@@ -25,8 +25,3 @@ class TaskFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["status"].widget.attrs.update({"class": "form-control"})
-
-class CommentForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['content']

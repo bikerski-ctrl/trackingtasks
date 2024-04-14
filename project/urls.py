@@ -22,6 +22,7 @@ from project.views import MainPageTemplate
 urlpatterns = [
     path('', MainPageTemplate.as_view(), name="main_page"),
     path('tasks/', include('tracker.urls')),
+    path('comments/', include('comments.urls')),
     path('admin/', admin.site.urls),
     path('accounts/login/', auth_views.LoginView.as_view(), name="login")
 ]

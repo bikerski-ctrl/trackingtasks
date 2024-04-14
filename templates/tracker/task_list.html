@@ -30,10 +30,12 @@
             <a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a>
             <span class="badge badge-primary">{{ task.status }}</span>|<span class="badge badge-secondary">{{ task.priority }}</span>
         </div>
+        {% if not task.status == "done" %}
         <form action="{% url 'task_complete' task.pk %}" method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-warning btn-sm">Complete</button>
         </form>
+        {% endif %}
     </li>
     {% empty %}
     There are no tasks.

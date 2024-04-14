@@ -1,0 +1,6 @@
+<h1 class="h4 text-primary">Add Comment</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary" type="submit" style="width: 100%">Add</button>
+</form>

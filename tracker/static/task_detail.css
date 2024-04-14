@@ -1,3 +1,16 @@
 .btn-ex {
     min-width: 60%;
 }
+
+.justify-text {
+    text-align: justify;
+}
+
+textarea {
+    resize: none;
+    height: 10em;
+}
+
+.action_form {
+    display: inline;
+}

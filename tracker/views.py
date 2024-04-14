@@ -1,10 +1,14 @@
 from django.views.generic import ListView, DetailView, CreateView, View, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.edit import FormMixin
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from tracker.models import Task, Comment
-from tracker.forms import TaskForm, TaskFilterForm, CommentForm
+from tracker.models import Task
+from comments.models import Comment
+from tracker.forms import TaskForm, TaskFilterForm
+from comments.forms import CommentForm
 from tracker.mixins import UserIsOwnerMixin
 
 class TaskListView(ListView):
@@ -35,8 +39,25 @@ class TaskDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["comments"] = Comment.objects.filter(task=self.get_object())
+        comments = Comment.objects.filter(task=self.get_object())
+        for comment in comments:
+            comment.liked = comment.likes.filter(id=self.request.user.id).exists()
+            comment.disliked = comment.dislikes.filter(id=self.request.user.id).exists()
+            comment.num_likes = comment.number_of_likes()
+            comment.num_dislikes = comment.number_of_dislikes()
+        context['comments'] = comments
+        context["form"] = CommentForm()
         return context
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            raise PermissionDenied
+        form = CommentForm(request.POST)
+        form.instance.author = self.request.user
+        form.instance.task = self.get_object()
+        if form.is_valid():
+            form.save()
+        return HttpResponseRedirect(self.request.path_info)
 
 
 class TaskCreate(LoginRequiredMixin, CreateView):
@@ -74,14 +95,3 @@ class TaskDeleteView(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
     model = Task
     template_name = "tracker/task_delete_confirmation.html"
     success_url = reverse_lazy("task_list")
-
-class CommentCreate(LoginRequiredMixin, CreateView):
-    model = Comment
-    form_class = CommentForm
-    template_name = "tracker/post_comment.html"
-    success_url = reverse_lazy("task_list")
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        form.instance.task = get_object_or_404(Task, pk=self.kwargs.get('pk'))
-        return super().form_valid(form)

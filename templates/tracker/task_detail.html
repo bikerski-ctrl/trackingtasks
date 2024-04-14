@@ -8,9 +8,11 @@
 {% endblock additional_css %}
 
 {% block content %}
-<div class="row text-md-center">
-    <h1 class="display-1 text-primary">{{task.title}}</h1>
-    <p class="display-6"><span class="badge badge-primary">{{ task.status }}</span>|
+<div class="row">
+    <div class="col" style="margin-left: auto; margin-right: auto;">
+    <h1 class="display-1 text-primary text-center">{{task.title}}</h1>
+    <p class="display-6 text-center">
+        <span class="badge badge-primary">{{ task.status }}</span>|
         <span class="badge badge-secondary">{{ task.priority }}</span>
         {% if task.urgency %}
         |<span class="badge badge-secondary">{{ task.urgency }}</span>
@@ -18,25 +20,24 @@
         {% if task.due_date %}
         |<span class="badge badge-secondary">{{ task.due_date }}</span>
         {% endif %}</p>
-    <p>{{task.description}}</p>
-</div>
-
-<div class="row">
-    <div class="col text-md-center">
-        <a href="{% url 'task_update' task.pk %}" class="btn btn-warning mt-3 btn-ex">Update</a>
-    </div>
-    <div class="col text-md-center">
-        <a href="{% url 'task_delete' task.pk %}" class="btn btn-danger mt-3 btn-ex">Delete</a>
-    </div>
-    <div class="col text-md-center">
-        <a href="{% url 'task_list' %}" class="btn btn-secondary mt-3 btn-ex">Go back to task list</a>
+    <p class="justify-text">{{task.description}}</p>
     </div>
 </div>
 
-<p><a href="{% url 'post_comment' task.pk%}">Post comment</a></p>
+{% if user.is_authenticated and user == task.creator%}
+<div class="row mt-3 mb-5">
+    <div class="col text-md-center">
+        <a href="{% url 'task_update' task.pk %}" class="btn btn-warning btn-ex">Update</a>
+    </div>
+    <div class="col text-md-center">
+        <a href="{% url 'task_delete' task.pk %}" class="btn btn-danger btn-ex">Delete</a>
+    </div>
+    <div class="col text-md-center">
+        <a href="{% url 'task_list' %}" class="btn btn-secondary btn-ex">Go back to task list</a>
+    </div>
+</div>
+{% endif %}
 
-{% for comment in comments %}
-<p>{{comment.author}}, {{comment.created_at}}</p>
-<p>{{comment.content}}</p>
-{% endfor %}
+{% include 'comments/comments.html' %}
+
 {% endblock content %}
