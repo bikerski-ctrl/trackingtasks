@@ -23,7 +23,7 @@
         {% if user.is_authenticated %}
         Procceed to your <a href="{% url 'task_list' %}">task</a> or <a href="#" >project</a> list.
         {% else %}
-        <a href="#">Log in</a> or <a href="#">sign up</a> to enjoy the full functionality of the task manager.
+        <a href="{% url 'login' %}">Log in</a> or <a href="{% url 'register' %}">sign up</a> to enjoy the full functionality of the task manager.
         {% endif %}
     </p>
 </div>

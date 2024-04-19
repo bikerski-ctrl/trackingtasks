@@ -1,16 +1,15 @@
 from django.views.generic import ListView, DetailView, CreateView, View, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import FormMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Exists, OuterRef, Count
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from tracker.models import Task
-from comments.models import Comment
 from tracker.forms import TaskForm, TaskFilterForm
-from comments.forms import CommentForm
 from tracker.mixins import UserIsOwnerMixin
+from comments.models import Comment
+from comments.forms import CommentForm
 
 class TaskListView(ListView):
     model = Task
