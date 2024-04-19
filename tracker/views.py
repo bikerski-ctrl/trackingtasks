@@ -52,7 +52,7 @@ class TaskDetailView(DetailView):
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             raise PermissionDenied
-        form = CommentForm(request.POST)
+        form = CommentForm(request.POST, request.FILES)
         form.instance.author = self.request.user
         form.instance.task = self.get_object()
         if form.is_valid():
