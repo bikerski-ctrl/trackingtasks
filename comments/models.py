@@ -12,11 +12,5 @@ class Comment(models.Model):
     edited = models.BooleanField(default=False)
     media = models.FileField(upload_to="comments_media/", blank=True, null=True)
 
-    def number_of_likes(self):
-        return self.likes.count()
-
-    def number_of_dislikes(self):
-        return self.dislikes.count()
-
     def short_content(self):
         return str(self.content)[:20]
