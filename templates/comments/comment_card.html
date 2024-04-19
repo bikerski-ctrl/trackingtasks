@@ -1,3 +1,4 @@
+{% load custom_tags %}
 <div class="row">
     <h5 class="card-title col{% if user.is_authenticated and user == comment.author%}-11{%endif%}">{{comment.author}}</h5>
     {% if user.is_authenticated and user == comment.author%}
@@ -19,6 +20,20 @@
 <h6 class="card-subtitle text-body-secondary">{{comment.created_at}}</h6>
 <p class="card-text">{{comment.content}}</p>
 
+{% if comment.media %}
+<div class="comment-media">
+    {% if comment.media.url|endswith:".jpg" or comment.media.url|endswith:".jpeg" or comment.media.url|endswith:".png" %}
+        <img src="{{comment.media.url}}" style="max-width: 500px;">
+    {% elif comment.media.url|endswith:".mp4" %}
+        <video width="320" height="240" controls>
+            <source src="{{comment.media.url}}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    {% else %}
+        <a href="{{comment.media.url}}">Download file</a>
+    {% endif %}
+</div>
+{% endif %}
 
 <form method="post" action="{% url 'comment_action' pk=comment.pk action='like'%}" class="action_form">
     {% csrf_token %}
