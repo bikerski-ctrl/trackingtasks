@@ -2,6 +2,7 @@ from django.views.generic import ListView, DetailView, CreateView, View, UpdateV
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import FormMixin
 from django.core.exceptions import PermissionDenied
+from django.db.models import Exists, OuterRef, Count
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -40,11 +41,12 @@ class TaskDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         comments = Comment.objects.filter(task=self.get_object())
-        for comment in comments:
-            comment.liked = comment.likes.filter(id=self.request.user.id).exists()
-            comment.disliked = comment.dislikes.filter(id=self.request.user.id).exists()
-            comment.num_likes = comment.number_of_likes()
-            comment.num_dislikes = comment.number_of_dislikes()
+        comments = comments.annotate(
+            liked=Exists(Comment.likes.through.objects.filter(comment_id=OuterRef('pk'), user_id=self.request.user.id)),
+            disliked=Exists(Comment.dislikes.through.objects.filter(comment_id=OuterRef('pk'), user_id=self.request.user.id)),
+            num_likes=Count('likes'),
+            num_dislikes=Count('dislikes')
+        )
         context['comments'] = comments
         context["form"] = CommentForm()
         return context
