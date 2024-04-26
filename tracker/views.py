@@ -11,6 +11,7 @@ from tracker.mixins import UserIsOwnerMixin
 from comments.models import Comment
 from comments.forms import CommentForm
 
+
 class TaskListView(ListView):
     model = Task
     context_object_name = 'tasks'
@@ -78,7 +79,6 @@ class TaskCompleteView(LoginRequiredMixin, UserIsOwnerMixin, View):
         task.status = "done"
         task.save()
         return HttpResponseRedirect(reverse_lazy("task_list"))
-
 
     def get_object(self):
         task_id = self.kwargs.get("pk")
