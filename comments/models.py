@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from tracker.models import Task
 
+
 class Comment(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
